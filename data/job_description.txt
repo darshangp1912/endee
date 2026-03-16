@@ -1,0 +1,42 @@
+Job Title: Senior AI Engineer — Search & Retrieval Systems
+Company: Nexus AI Labs
+Location: Remote (India preferred)
+Type: Full-time
+
+COMPANY OVERVIEW
+Nexus AI Labs builds next-generation AI search and knowledge retrieval products for enterprise clients. Our platform processes billions of vectors daily and helps organizations unlock the value of their unstructured data using state-of-the-art LLMs and vector databases.
+
+ROLE OVERVIEW
+We are looking for a Senior AI Engineer with deep expertise in large-scale retrieval systems, LLM integration, and ML infrastructure to join our core platform team. You will design, build, and optimize the RAG pipelines that power our flagship product.
+
+KEY RESPONSIBILITIES
+- Design and implement production-grade Retrieval Augmented Generation (RAG) pipelines from scratch.
+- Own the vector database infrastructure: indexing, querying, optimization, and scaling.
+- Integrate and evaluate open-source and commercial LLMs (Mistral, LLaMA, GPT-4) for domain-specific use cases.
+- Build robust document ingestion pipelines: chunking strategies, embedding generation, metadata filtering.
+- Collaborate with product and infrastructure teams to serve low-latency AI search APIs at scale.
+- Conduct benchmark experiments and drive model selection decisions using data.
+- Mentor junior engineers and establish AI engineering best practices across the organization.
+
+REQUIRED QUALIFICATIONS
+- 4+ years of experience in Python development and machine learning engineering.
+- Strong hands-on experience building and deploying RAG systems in production.
+- Proficiency with vector databases: Endee, Pinecone, Weaviate, Qdrant, or FAISS.
+- Experience with embedding models: sentence-transformers, OpenAI embeddings, or equivalent.
+- Familiarity with LLM frameworks: LangChain, LlamaIndex, or direct API usage.
+- Solid understanding of HNSW, ANN search, and approximate nearest neighbor algorithms.
+- Experience with containerized deployments (Docker, Kubernetes).
+
+PREFERRED QUALIFICATIONS
+- Contributions to open-source AI or ML projects.
+- Experience with Ollama or other local LLM inference solutions.
+- Familiarity with MLOps pipelines, model observability, and experiment tracking.
+- Prior experience at a high-growth startup or AI product company.
+
+COMPENSATION
+- Competitive salary: ₹30L – ₹55L per annum (based on experience)
+- Equity participation
+- Remote-first culture with flexible working hours
+
+HOW TO APPLY
+Submit your resume and a brief note explaining your most impactful RAG or vector search project to careers@nexus-ai.io.
