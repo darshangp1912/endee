@@ -1,139 +1,184 @@
-<p align="center">
-  <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="docs/assets/logo-light.svg">
-      <img height="100" alt="Endee" src="docs/assets/logo-dark.svg">
-  </picture>
-</p>
+# AI Interview Assistant
 
-<p align="center">
-    <b>High-performance open-source vector database for AI search, RAG, semantic search, and hybrid retrieval.</b>
-</p>
+> A local, production-ready **Retrieval Augmented Generation (RAG)** system that answers questions about a candidate's resume and job description.
+> Built with **Endee** vector database, **sentence-transformers** embeddings, and **Ollama + Mistral** for fully local LLM inference — no cloud API keys required.
 
-<p align="center">
-    <a href="./docs/getting-started.md"><img src="https://img.shields.io/badge/Quick_Start-Local_Setup-success?style=flat-square" alt="Quick Start"></a>
-    <a href="https://docs.endee.io/quick-start"><img src="https://img.shields.io/badge/Docs-Quick_Start-success?style=flat-square" alt="Docs"></a>
-    <a href="https://github.com/endee-io/endee/blob/master/LICENSE"><img src="https://img.shields.io/github/license/endee-io/endee?style=flat-square" alt="License"></a>
-    <a href="https://discord.gg/5HFGqDZQE3"><img src="https://img.shields.io/badge/Discord-Join_Chat-5865F2?logo=discord&style=flat-square" alt="Discord"></a>
-    <a href="https://endee.io/"><img src="https://img.shields.io/badge/Website-Endee-111111?style=flat-square" alt="Website"></a>
-    <!-- <a href="https://endee.io/benchmarks"><img src="https://img.shields.io/badge/Benchmarks-Coming_Soon-1F8B4C?style=flat-square" alt="Benchmarks"></a> -->
-    <!-- <a href="https://endee.io/cloud"><img src="https://img.shields.io/badge/Cloud-Coming_Soon-2496ED?style=flat-square" alt="Cloud"></a> -->
-</p>
+---
 
-<p align="center">
-<strong><a href="./docs/getting-started.md">Quick Start</a> • <a href="#why-endee">Why Endee</a> • <a href="#use-cases">Use Cases</a> • <a href="#features">Features</a> • <a href="#api-and-clients">API and Clients</a> • <a href="#docs-and-links">Docs</a> • <a href="#community-and-contact">Contact</a></strong>
-</p>
+## Architecture
 
-# Endee: Open-Source Vector Database for AI Search
-
-**Endee** is a high-performance open-source vector database built for AI search and retrieval workloads. It is designed for teams building **RAG pipelines**, **semantic search**, **hybrid search**, recommendation systems, and filtered vector retrieval APIs that need production-oriented performance and control.
-
-Endee combines vector search with filtering, sparse retrieval support, backup workflows, and deployment flexibility across local builds and Docker-based environments. The project is implemented in C++ and optimized for modern CPU targets, including AVX2, AVX512, NEON, and SVE2.
-
-If you want the fastest path to evaluate Endee locally, start with the [Getting Started guide](./docs/getting-started.md) or the hosted docs at [docs.endee.io](https://docs.endee.io/quick-start).
-
-## Why Endee
-
-- Built as a dedicated vector database for AI applications, search systems, and retrieval-heavy workloads.
-- Supports dense vector retrieval plus sparse search capabilities for hybrid search use cases.
-- Includes payload filtering for metadata-aware retrieval and application-specific query logic.
-- Ships with operational features already documented in this repo, including backup flows and runtime observability.
-- Offers flexible deployment paths: local scripts, manual builds, Docker images, and prebuilt registry images.
-
-## Getting Started
-
-The full installation, build, Docker, runtime, and authentication instructions are in [docs/getting-started.md](./docs/getting-started.md).
-
-Fastest local path:
-
-```bash
-chmod +x ./install.sh ./run.sh
-./install.sh --release --avx2
-./run.sh
+```
+User Query
+    │
+    ▼
+sentence-transformers          ← embeds the query (all-MiniLM-L6-v2)
+    │
+    ▼
+Endee Vector DB  ──search──►  Top-3 relevant chunks
+    │                              │
+    ▼                              ▼
+Ollama (Mistral)  ◄── prompt with context + question
+    │
+    ▼
+Answer  ──►  Streamlit UI
 ```
 
-The server listens on port `8080`. For detailed setup paths, supported operating systems, CPU optimization flags, Docker usage, and authentication examples, use:
+---
 
-- [Getting Started](./docs/getting-started.md)
-- [Hosted Quick Start Docs](https://docs.endee.io/quick-start)
+## RAG Workflow
 
-## Use Cases
+| Step | Description |
+|------|-------------|
+| **1. Ingest** | Raw `.txt` files in `data/` are split into overlapping word-level chunks |
+| **2. Embed** | Each chunk is encoded with `all-MiniLM-L6-v2` (384-dim dense vector) |
+| **3. Store** | Vectors + metadata are upserted into an Endee cosine-similarity index |
+| **4. Retrieve** | User query is embedded and the top-3 closest chunks are fetched via Endee ANN search |
+| **5. Generate** | Retrieved chunks are packed into a prompt and sent to Ollama (Mistral) |
+| **6. Answer** | Ollama returns a grounded, concise answer displayed in the Streamlit UI |
 
-### RAG and AI Retrieval
+---
 
-Use Endee as the retrieval layer for question answering, chat assistants, copilots, and other RAG applications that need fast vector search with metadata-aware filtering.
+## Tech Stack
 
-### Agentic AI and AI Agent Memory
+| Component | Technology |
+|-----------|-----------|
+| Language | Python 3.9+ |
+| Embeddings | `sentence-transformers` — `all-MiniLM-L6-v2` |
+| Vector Database | **Endee** (Docker, local) |
+| LLM | **Ollama** — `mistral` (fully local) |
+| UI | **Streamlit** |
 
-Use Endee as the long-term memory and context retrieval layer for AI agents built with frameworks like LangChain, CrewAI, AutoGen, and LlamaIndex. Store and retrieve past observations, tool outputs, conversation history, and domain knowledge mid-execution with low-latency filtered vector search, so your autonomous agents get the right context without stalling their reasoning loop.
+---
 
-### Semantic Search
+## Repository Structure
 
-Build semantic search experiences for documents, products, support content, and knowledge bases using vector similarity search instead of exact keyword-only matching.
+```
+ai-interview-assistant/
+├── app.py              # Streamlit web interface
+├── ingest.py           # Document chunking, embedding, and Endee ingestion
+├── rag_pipeline.py     # Core RAG logic: retrieval (Endee) + generation (Ollama)
+├── config.py           # Centralised configuration and environment variables
+├── requirements.txt    # Python dependencies
+├── .env                # Local overrides (optional, safe defaults included)
+├── README.md
+└── data/
+    ├── resume.txt          # Candidate resume
+    └── job_description.txt # Target job description
+```
 
-### Hybrid Search
+---
 
-Combine dense retrieval, sparse vectors, and filtering to improve relevance for search workflows where both semantic understanding and term-level precision matter.
+## Prerequisites
 
-### Recommendations and Matching
+- **Python 3.9+**
+- **Docker** (for Endee vector database)
+- **Ollama** ([install](https://ollama.com/download))
 
-Support recommendation, similarity matching, and nearest-neighbor retrieval workflows across text, embeddings, and other high-dimensional representations.
+---
 
-## Features
+## Setup & Running
 
-- **Vector search** for AI retrieval and semantic similarity workloads.
-- **Hybrid retrieval support** with sparse vector capabilities documented in [docs/sparse.md](./docs/sparse.md).
-- **Payload filtering** for structured retrieval logic documented in [docs/filter.md](./docs/filter.md).
-- **Backup APIs and flows** documented in [docs/backup-system.md](./docs/backup-system.md).
-- **Operational logging and instrumentation** documented in [docs/logs.md](./docs/logs.md) and [docs/mdbx-instrumentation.md](./docs/mdbx-instrumentation.md).
-- **CPU-targeted builds** for AVX2, AVX512, NEON, and SVE2 deployments.
-- **Docker deployment options** for local and server environments.
+### 1. Clone the repository
 
-## API and Clients
+```bash
+git clone <repository_url>
+cd ai-interview-assistant
+```
 
-Endee exposes an HTTP API for managing indexes and serving retrieval workloads. The current repo documentation and examples focus on running the server directly and calling its API endpoints.
+### 2. Install Python dependencies
 
-Current developer entry points:
+```bash
+pip install -r requirements.txt
+```
 
-- [Getting Started](./docs/getting-started.md) for local build and run flows
-- [Hosted Docs](https://docs.endee.io/quick-start) for product documentation
-- [Release Notes 1.0.0](https://github.com/endee-io/endee/releases/tag/1.0.0) for recent platform changes
+### 3. Start Endee Vector Database
 
-## Docs and Links
+```bash
+docker run -d -p 8000:8080 endeeio/endee-server:latest
+```
 
-- [Getting Started](./docs/getting-started.md)
-- [Hosted Documentation](https://docs.endee.io/quick-start)
-- [Release Notes](https://github.com/endee-io/endee/releases/tag/1.0.0)
-- [Sparse Search](./docs/sparse.md)
-- [Filtering](./docs/filter.md)
-- [Backups](./docs/backup-system.md)
+### 4. Start Ollama and pull Mistral
 
-## Community and Contact
+```bash
+ollama serve          # starts the Ollama server
+ollama pull mistral   # downloads the Mistral model (~4 GB)
+```
 
-- Join the community on [Discord](https://discord.gg/5HFGqDZQE3)
-- Visit the website at [endee.io](https://endee.io/)
-- For trademark or branding permissions, contact [enterprise@endee.io](mailto:enterprise@endee.io)
+### 5. (Optional) Customise your data
 
-## Contributing
+Replace or edit the files in `data/`:
+- `data/resume.txt` — candidate's resume
+- `data/job_description.txt` — target job description
 
-We welcome contributions from the community to help make vector search faster and more accessible for everyone.
+### 6. Ingest documents into Endee
 
-- Submit pull requests for fixes, features, and improvements
-- Report bugs or performance issues through GitHub issues
-- Propose enhancements for search quality, performance, and deployment workflows
+```bash
+python ingest.py
+```
+
+Expected output:
+```
+Loading embedding model...
+Connecting to Endee at http://localhost:8000 ...
+Creating index 'interview_assistant'...
+  'job_description.txt' → 12 chunks
+  'resume.txt' → 14 chunks
+Generating embeddings for 26 chunks...
+Inserting into Endee Vector Database...
+✅ Ingestion complete! Inserted 26 chunks into 'interview_assistant'.
+```
+
+### 7. Launch the UI
+
+```bash
+streamlit run app.py
+```
+
+Open [http://localhost:8501](http://localhost:8501) in your browser.
+
+---
+
+## Example Queries
+
+- *Does the candidate have production RAG experience?*
+- *What vector databases has the candidate worked with?*
+- *Does the candidate meet the job's required qualifications?*
+- *Summarise the skill gap between the candidate and the role.*
+- *What is the compensation for this role?*
+
+---
+
+## Configuration
+
+All settings have sensible defaults. Override via `.env`:
+
+```env
+ENDEE_BASE_URL=http://localhost:8000
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=mistral
+```
+
+To use a different Ollama model (e.g. `llama3`), pull it first:
+```bash
+ollama pull llama3
+```
+Then update `.env`:
+```env
+OLLAMA_MODEL=llama3
+```
+
+---
+
+## How Endee Is Used
+
+- **Index creation**: `client.create_index(name, dimension=384, space_type="cosine")`
+- **Ingestion**: `index.upsert([{id, vector, meta: {document, source, chunk_id}}])`
+- **Retrieval**: `index.query(vector=query_embedding, top_k=3)`
+
+Endee's HNSW-based ANN search returns results in milliseconds even as the document corpus grows.
+
+---
 
 ## License
 
-Endee is open source software licensed under the **Apache License 2.0**. See the [LICENSE](./LICENSE) file for full terms.
-
-## Trademark and Branding
-
-“Endee” and the Endee logo are trademarks of Endee Labs.
-
-The Apache License 2.0 does not grant permission to use the Endee name, logos, or branding in a way that suggests endorsement or affiliation.
-
-If you offer a hosted or managed service based on this software, you must use your own branding and avoid implying it is an official Endee service.
-
-## Third-Party Software
-
-This project includes or depends on third-party software components licensed under their respective open-source licenses. Use of those components is governed by their own license terms.
+MIT
