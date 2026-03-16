@@ -1,0 +1,44 @@
+John Doe
+Senior Software Engineer | AI & Machine Learning Specialist
+Email: john.doe@email.com | GitHub: github.com/johndoe | LinkedIn: linkedin.com/in/johndoe
+
+PROFESSIONAL SUMMARY
+Experienced software engineer with 6 years of specialization in Python, machine learning, and AI infrastructure. Proven track record of building and deploying large-scale AI systems in production. Deep expertise in retrieval-augmented generation (RAG), vector databases, and LLM integration. Passionate about building efficient, scalable, and maintainable AI pipelines.
+
+TECHNICAL SKILLS
+Languages: Python, SQL, Bash
+ML Frameworks: PyTorch, TensorFlow, scikit-learn, Hugging Face Transformers
+Vector Databases: Endee, ChromaDB, Pinecone, FAISS
+LLM Tools: LangChain, LlamaIndex, Ollama, OpenAI API
+Infrastructure: Docker, Kubernetes, AWS, GCP
+Other: FastAPI, Streamlit, Git, REST APIs
+
+WORK EXPERIENCE
+
+Senior AI Engineer — DataMind Inc. (2022 – Present)
+- Led the design and deployment of a Retrieval Augmented Generation (RAG) system serving 200,000+ daily queries with sub-200ms response time.
+- Built semantic search infrastructure using Endee vector database with sentence-transformers embeddings (all-MiniLM-L6-v2), achieving 98.3% recall on benchmark datasets.
+- Reduced LLM inference costs by 40% by implementing a two-stage retrieval pipeline: fast approximate search followed by cross-encoder reranking.
+- Mentored a team of 4 junior engineers on MLOps best practices and production AI deployment.
+
+ML Engineer — NLP Solutions Ltd. (2020 – 2022)
+- Developed an internal enterprise search platform processing over 10 million documents daily using semantic embeddings and approximate nearest neighbor search.
+- Integrated multiple LLM providers (GPT-4, Mistral, LLaMA) into a unified inference abstraction layer.
+- Implemented document chunking, embedding generation, and vector storage pipelines with full CI/CD automation.
+
+Junior Python Developer — TechBase Corp. (2018 – 2020)
+- Built and maintained REST APIs using FastAPI serving 50,000+ requests per day.
+- Automated data processing pipelines reducing manual ETL effort by 60%.
+
+EDUCATION
+B.Sc. Computer Science — Indian Institute of Technology, Delhi (2014 – 2018)
+Specialization: Artificial Intelligence and Machine Learning
+CGPA: 8.9 / 10
+
+NOTABLE PROJECTS
+- Open-source RAG toolkit (1,200+ GitHub stars): A modular pipeline for document ingestion, chunking, embedding, and LLM-powered Q&A over private documents.
+- LLM Benchmark Suite: Evaluated 12 open-source models on domain-specific tasks, publishing results and tooling used by 50+ companies.
+
+CERTIFICATIONS
+- AWS Certified Machine Learning – Specialty
+- Google Professional Machine Learning Engineer
